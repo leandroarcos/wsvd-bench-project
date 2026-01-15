@@ -40,11 +40,11 @@ public class Database {
     private static final int DATABASE_CONNECTION_POOL_SIZE = 10;
     private static final int DATABASE_CONNECTION_MAX_USAGE = 100;
     //
-    private static final String server = "soa-sut-db.dei.uc.pt";
-    private static final int port = 1521;
-    private static final String sid = "orcl";
-    private static final String userName = "wsdbench";
-    private static final String passwd = "Samsung";
+    private static final String server = System.getenv("WSDB_SERVER");
+    private static final int port = Integer.parseInt(System.getenv("WSDB_PORT"));
+    private static final String sid = System.getenv("WSDB_SID");
+    private static final String userName = System.getenv("WSDB_USER");
+    private static final String passwd = System.getenv("WSDB_PASS");
     private static final String driverName = "oracle.jdbc.driver.OracleDriver";
     private static final String url = "jdbc:oracle:thin:@" + server + ":" + port + ":" + sid;
     //

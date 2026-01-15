@@ -1,8 +1,8 @@
 package pt.uc.dei.wsvd.bench.tpcw.versions;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import pt.uc.dei.wsvd.bench.Database;
 
 /**
@@ -19,19 +19,22 @@ public class GetPassword_VxA {
         String passwd = null;
         Connection con = Database.pickConnection();
         try {
-            // Prepare SQL
-            Statement get_passwd = Database.createStatement(con);
-            // Set parameter
-//            get_passwd.setString(1, );
-            ResultSet rs = get_passwd.executeQuery("SELECT c_passwd FROM tpcw_customer WHERE c_uname = '" + C_UNAME + "'");
-            // Results
-            rs.next();
-            passwd = rs.getString("c_passwd");
-            rs.close();
-            get_passwd.close();
-            con.commit();
+            String sql = "SELECT c_passwd FROM tpcw_customer WHERE c_uname = ?";
+            try (PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setString(1, C_UNAME);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        passwd = rs.getString("c_passwd");
+                    }
+                }
+                con.commit();
+            }
         } catch (java.lang.Exception ex) {
             //ex.printStackTrace();
+            try{
+                con.rollback();
+            } catch (Exception e) {
+            }
         } finally {
             Database.relaseConnection(con);
         }
